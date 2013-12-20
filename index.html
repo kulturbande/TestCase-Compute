@@ -5,13 +5,17 @@
 		<title>Test Suite - Compute</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<script type="text/javascript">
-			function hide_element(id) {
-				document.getElementById(id).style.display = "none";
+			function hide_element() {
+				document.getElementById('foo').style.display = "none";
 			}
+
+			window.addEventListener("load", function() {
+				document.getElementsByTagName('input')[0].addEventListener('click', hide_element);
+			}, false);
 		</script>
 	</head>
 	<body>
 		<h1 id="foo">Verschwindet die Überschrift, wenn man den Button drückt?</h1>
-		<input type="button" onclick="hide_element('foo');" value="OK" />
+		<input type="button" value="OK" class="remove-headline" />
 	</body>
 </html>
