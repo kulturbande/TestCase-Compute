@@ -9,10 +9,10 @@
 	<body>
 		<div class="container">
 			<div class="row">
-				<h1 class="col-md-12">AJAX - Simple Call (Plain)</h1>
+				<h1 class="col-md-12">AJAX - Simple Call (jQuery)</h1>
 			</div>
 			<div class="row">
-				<form role="form" name="ajax-test" method="POST" action="compute/add">
+				<form role="form" name="ajax-test" id="ajax_test" method="POST" action="compute/add">
 					<div class="col-md-6">
 						<div class="form-group">
 							<label for="nameSimpleAjax" class="sr-only">Name</label>
@@ -35,41 +35,21 @@
 				</div>
 			</div>
 		</div>
-		<!-- <script src="js/vendors/jquery-2.0.3.js"></script> -->
+		<script src="js/vendors/jquery-2.0.3.js"></script>
 		<script type="text/javascript">
-			var submit_data = function(url, method, data, callback) {
-				var client = new XMLHttpRequest();
-				client.onreadystatechange = function() {
-					if(this.readyState == this.DONE) {
-						var data = null;
-						if(this.status == 200 && this.responseText != null) {
-							data = JSON.parse(this.responseText);
-						}
-						callback(data);
-						return;
-					}
-				}
-				client.open(method, url);
-				client.send(data);
-			}
-
-			var form = document.forms['ajax-test'];
-			form.onsubmit = function() {
-				var data = new FormData();
-				var inputs = form.getElementsByTagName('input');
-				for(var i=0; i<inputs.length; i++) {
-					data.append(inputs[i].name, inputs[i].value);
-					inputs[i].value = "";
-				}
-				submit_data(form.action, form.method, data, function(data) {
-					if (data.success) {
-						var element = document.createElement("li");
-						element.appendChild(document.createTextNode(data.data.name));
-						document.getElementById("data_list").appendChild(element);
+			$('#ajax_test').on('submit', function(event) {
+				event.preventDefault();
+				var form = $(this);
+				$.ajax({
+					url: form.attr('action'),
+					type: form.attr('method'),
+					data: form.find('input').serialize(),
+					success: function(data) {
+						form.find('input').val('').focus();
+						$("#data_list").append('<li>' + data.data.name + '</li>')
 					}
 				});
-				return false;
-			}
+			});
 		</script>
 	</body>
 </html>
