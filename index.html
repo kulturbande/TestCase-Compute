@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" ng-app>
 	<head>
 		<meta charset="utf-8">
 		<title>Test Suite - Compute</title>
@@ -7,16 +7,16 @@
 		<link rel="stylesheet" type="text/css" href="css/vendors/bootstrap.css">
 	</head>
 	<body>
-		<div class="container">
+		<div class="container" ng-controller="NameCtrl">
 			<div class="row">
-				<h1 class="col-md-12">AJAX - Simple Call (jQuery)</h1>
+				<h1 class="col-md-12">AJAX - Simple Call (Angular.js)</h1>
 			</div>
 			<div class="row">
-				<form role="form" name="ajax-test" id="ajax_test" method="POST" action="compute/add">
+				<form role="form" ng-submit="addName()">
 					<div class="col-md-6">
 						<div class="form-group">
 							<label for="nameSimpleAjax" class="sr-only">Name</label>
-							<input type="text" name="name" id="nameSimpleAjax" value="" placeholder="Bitte einen Namen eigeben"  class="form-control" />
+							<input type="text" name="name" id="nameSimpleAjax" value="" placeholder="Bitte einen Namen eigeben"  class="form-control" ng-model="Name" />
 						</div>
 					</div>
 					<div class="col-md-6">
@@ -28,28 +28,29 @@
 			<div class="row">
 				<div class="col-md-6">
 					<ul id="data_list">
-						<% branch_data.forEach(function(item) { %>
-						<li><%= item.name %></li>
-						<% }) %>
+						<li ng-repeat="item in items">
+							{{item.name}}
+						</li>
 					</ul>
 				</div>
 			</div>
 		</div>
-		<script src="js/vendors/jquery-2.0.3.js"></script>
+		<script src="js/vendors/angular.min.js"></script>
 		<script type="text/javascript">
-			$('#ajax_test').on('submit', function(event) {
-				event.preventDefault();
-				var form = $(this);
-				$.ajax({
-					url: form.attr('action'),
-					type: form.attr('method'),
-					data: form.find('input').serialize(),
-					success: function(data) {
-						form.find('input').val('').focus();
-						$("#data_list").append('<li>' + data.data.name + '</li>')
-					}
-				});
-			});
+			function NameCtrl($scope, $http) {
+				$scope.items = []
+				$scope.addName = function() {
+					$scope.items.push({name: $scope.Name});
+					$scope.submit();
+				}
+				$scope.submit = function() {
+					$http({method: 'POST', url: 'compute/add', data: {name: $scope.Name}});
+				}
+				$http({method: 'GET', url: 'compute/branch_data'}).
+					success(function(data, status, headers, config) {
+						$scope.items = data.data;
+					});
+			}	
 		</script>
 	</body>
 </html>
