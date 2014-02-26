@@ -4,8 +4,62 @@
 		<meta charset="utf-8">
 		<title>Test Suite - Compute</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	</head>
-	<body>
+		<style type="text/css">
+		.measures {
+			position: absolute;
+			right: 30px;
+			top: 50px;
+			width: 650px;
+			border: 1px solid #333;
+			background-color: #f3f3f3;
+		}
+		.measures > table {
+			width: 100%;
+			table-layout: fixed;
+		}
 
+		.measures > table td:first-child {
+			width: 200px;
+			overflow: hidden;
+		}
+		</style>
+	</head>
+	<body onload="init()">
+		<img id="image0" src="http://w3c-test.org/webperf/image0.png" /><br/>
+		<img id="image1" src="http://w3c-test.org/webperf/image1.png" /><br/>
+		<img id="image2" src="images/performance_image.png" />
+
+		<div class="measures">
+			<table id="measureTable">
+				<tr>
+					<th>Name</th>
+					<th>Entry Type</th>
+					<th>Start Time</th>
+					<th>Duration</th>
+				</tr>
+			</table>
+		</div>
+		<script>
+			function init() {
+				measurePerf();
+			}
+
+			function measurePerf() {
+				var perfEntries = performance.getEntries();
+				var table = document.getElementById("measureTable");
+
+				for (var i = 0; i < perfEntries.length; i++) {
+					var tr = document.createElement("tr");
+					var name = perfEntries[i].name.match(/\w+\.png$/);
+					var elements = [name[0], perfEntries[i].entryType, perfEntries[i].startTime, perfEntries[i].duration];
+					elements.forEach(function(item) {
+						var td = document.createElement('td');
+						td.appendChild(document.createTextNode(item));
+						tr.appendChild(td);
+					});
+					table.appendChild(tr);
+				}
+			}
+		</script>
 	</body>
 </html>
