@@ -6,10 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<style type="text/css">
 		.measures {
-			position: absolute;
-			right: 30px;
-			top: 50px;
-			width: 650px;
+			margin-bottom: 5px;
 			border: 1px solid #333;
 			background-color: #f3f3f3;
 		}
@@ -18,17 +15,18 @@
 			table-layout: fixed;
 		}
 
+		.measures > table td {
+			text-align: center;
+		}
+
 		.measures > table td:first-child {
 			width: 200px;
 			overflow: hidden;
+			text-align: left;
 		}
 		</style>
 	</head>
 	<body onload="init()">
-		<img id="image0" src="http://w3c-test.org/webperf/image0.png" /><br/>
-		<img id="image1" src="http://w3c-test.org/webperf/image1.png" /><br/>
-		<img id="image2" src="images/performance_image.png" />
-
 		<div class="measures">
 			<table id="measureTable">
 				<tr>
@@ -39,6 +37,30 @@
 				</tr>
 			</table>
 		</div>
+
+		<div class="measures">
+			<table id="resourceTable">
+				<tr>
+					<th>Name</th>
+					<th>Redirect Start</th>
+					<th>Redirect End</th>
+					<th>fetchStart</th>
+					<th>Domain Lookup Start</th>
+					<th>Domain Lookup End</th>
+					<th>Connect Start</th>
+					<th>Connect End</th>
+					<th>Secure Connection Start</th>
+					<th>Request Start</th>
+					<th>Response Start</th>
+					<th>Response End</th>
+				</tr>
+			</table>
+		</div>
+		<img id="image0" src="http://w3c-test.org/webperf/image0.png" />
+		<img id="image1" src="http://w3c-test.org/webperf/image1.png" />
+		<img id="image2" src="images/performance_image.png" />
+
+
 		<script>
 			function init() {
 				measurePerf();
@@ -46,18 +68,36 @@
 
 			function measurePerf() {
 				var perfEntries = performance.getEntries();
-				var table = document.getElementById("measureTable");
+				var measureTable = document.getElementById("measureTable");
+				var resourceTable = document.getElementById("resourceTable");
 
-				for (var i = 0; i < perfEntries.length; i++) {
+				var addTableRow = function(table, elements) {
 					var tr = document.createElement("tr");
-					var name = perfEntries[i].name.match(/\w+\.png$/);
-					var elements = [name[0], perfEntries[i].entryType, perfEntries[i].startTime, perfEntries[i].duration];
 					elements.forEach(function(item) {
 						var td = document.createElement('td');
+
+						if (typeof item == "number") {
+							item = item.toFixed(2);
+						}
 						td.appendChild(document.createTextNode(item));
 						tr.appendChild(td);
 					});
 					table.appendChild(tr);
+				}
+
+				for (var i = 0; i < perfEntries.length; i++) {
+
+					var name = perfEntries[i].name.match(/\w+\.png$/);
+					//console.log(perfEntries[i]);
+
+					var defaultElements = [name[0], perfEntries[i].entryType, perfEntries[i].startTime, perfEntries[i].duration];
+					var resourceTimingElements = [name[0], perfEntries[i].redirectStart, perfEntries[i].redirectEnd,
+						perfEntries[i].fetchStart, perfEntries[i].domainLookupStart, , perfEntries[i].domainLookupEnd,
+						perfEntries[i].connectStart, perfEntries[i].connectEnd, perfEntries[i].secureConnectionStart,
+						perfEntries[i].requestStart, perfEntries[i].responseStart, perfEntries[i].responseEnd];
+
+					addTableRow(measureTable, defaultElements);
+					addTableRow(resourceTable, resourceTimingElements);
 				}
 			}
 		</script>
