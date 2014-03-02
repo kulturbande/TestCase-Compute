@@ -88,7 +88,6 @@
 				for (var i = 0; i < perfEntries.length; i++) {
 
 					var name = perfEntries[i].name.match(/\w+\.png$/);
-					//console.log(perfEntries[i]);
 
 					var defaultElements = [name[0], perfEntries[i].entryType, perfEntries[i].startTime, perfEntries[i].duration];
 					var resourceTimingElements = [name[0], perfEntries[i].redirectStart, perfEntries[i].redirectEnd,
